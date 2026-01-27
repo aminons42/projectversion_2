@@ -1,0 +1,126 @@
+version: '3.8'
+
+services:
+  # Base de données pour le service Utilisateurs
+  mysql-utilisateurs:
+    image: mysql:8.0
+    container_name: hse_mysql_utilisateurs
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: db_utilisateurs
+      MYSQL_USER: hse_user
+      MYSQL_PASSWORD: HseSecure2026!
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_utilisateurs_data:/var/lib/mysql
+      - ./init-scripts/01-utilisateurs.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - hse-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Base de données pour le service Incidents
+  mysql-incidents:
+    image: mysql:8.0
+    container_name: hse_mysql_incidents
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: db_incidents
+      MYSQL_USER: hse_user
+      MYSQL_PASSWORD: HseSecure2026!
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_incidents_data:/var/lib/mysql
+      - ./init-scripts/02-incidents.sql:/docker-entrypoint-initdb.d/02-init.sql
+    networks:
+      - hse-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Base de données pour le service Audits
+  mysql-audits:
+    image: mysql:8.0
+    container_name: hse_mysql_audits
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: db_audits
+      MYSQL_USER: hse_user
+      MYSQL_PASSWORD: HseSecure2026!
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql_audits_data:/var/lib/mysql
+      - ./init-scripts/03-audits.sql:/docker-entrypoint-initdb.d/03-init.sql
+    networks:
+      - hse-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Base de données pour le service Plans d'Action
+  mysql-planaction:
+    image: mysql:8.0
+    container_name: hse_mysql_planaction
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: db_planaction
+      MYSQL_USER: hse_user
+      MYSQL_PASSWORD: HseSecure2026!
+    ports:
+      - "3310:3306"
+    volumes:
+      - mysql_planaction_data:/var/lib/mysql
+      - ./init-scripts/04-planaction.sql:/docker-entrypoint-initdb.d/04-init.sql
+    networks:
+      - hse-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # phpMyAdmin pour gérer les bases de données
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: hse_phpmyadmin
+    restart: always
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOSTS: mysql-utilisateurs,mysql-incidents,mysql-audits,mysql-planaction
+    ports:
+      - "8090:80"
+    networks:
+      - hse-network
+    depends_on:
+      - mysql-utilisateurs
+      - mysql-incidents
+      - mysql-audits
+      - mysql-planaction
+
+networks:
+  hse-network:
+    driver: bridge
+
+volumes:
+  mysql_utilisateurs_data:
+    driver: local
+  mysql_incidents_data:
+    driver: local
+  mysql_audits_data:
+    driver: local
+  mysql_planaction_data:
+    driver: local

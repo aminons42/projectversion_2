@@ -1,0 +1,129 @@
+<div class="incidents-page">
+  
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">Gestion des Incidents</h1>
+    <button class="btn-primary" (click)="openCreateModal()">
+      + Nouveau Incident
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label>Type:</label>
+      <select [(ngModel)]="filterType" (change)="applyFilters()" class="filter-select">
+        <option value="">Tous</option>
+        <option *ngFor="let type of incidentTypes" [value]="type">{{ type }}</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label>Statut:</label>
+      <select [(ngModel)]="filterStatus" (change)="applyFilters()" class="filter-select">
+        <option value="">Tous</option>
+        <option *ngFor="let status of incidentStatuses" [value]="status">{{ status }}</option>
+      </select>
+    </div>
+    
+    <div class="filter-info">
+      {{ filteredIncidents.length }} incident(s)
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <table class="data-table" *ngIf="filteredIncidents.length > 0; else noData">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Lieu</th>
+          <th>Description</th>
+          <th>Créateur</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let incident of filteredIncidents">
+          <td>#{{ incident.id }}</td>
+          <td>{{ incident.dateTime | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <span class="type-badge" [style.background-color]="getTypeColor(incident.typeIncident)">
+              {{ incident.typeIncident }}
+            </span>
+          </td>
+          <td>{{ incident.location }}</td>
+          <td class="description-cell">{{ incident.description }}</td>
+          <td>{{ incident.creatorName }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatusClass(incident.statut)">
+              {{ incident.statut }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon btn-edit" (click)="openEditModal(incident)" title="Modifier">
+                ✏️
+              </button>
+              <button class="btn-icon btn-delete" (click)="deleteIncident(incident.id)" title="Supprimer">
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <ng-template #noData>
+      <div class="empty-state">
+        <p>Aucun incident trouvé</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      
+      <div class="modal-header">
+        <h2>{{ isEditMode ? 'Modifier' : 'Créer' }} un Incident</h2>
+        <button class="btn-close" (click)="closeModal()">×</button>
+      </div>
+      
+      <form (ngSubmit)="submitForm()" class="modal-form">
+        
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="datetime-local" [(ngModel)]="formData.creation_date" name="creation_date" required class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label>Type d'incident *</label>
+          <select [(ngModel)]="formData.type_incident" name="type_incident" required class="form-input">
+            <option *ngFor="let type of incidentTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Lieu *</label>
+          <input type="text" [(ngModel)]="formData.location" name="location" required placeholder="Ex: Atelier A" class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label>Description *</label>
+          <textarea [(ngModel)]="formData.description" name="description" required rows="4" placeholder="Décrivez l'incident..." class="form-input"></textarea>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="btn-primary">{{ isEditMode ? 'Modifier' : 'Créer' }}</button>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+
+</div>

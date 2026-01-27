@@ -1,0 +1,120 @@
+<div class="container">
+  <div class="header">
+    <h1>Non-Conformités</h1>
+    <button class="btn-primary" (click)="openCreateModal()">
+      + Nouvelle Non-Conformité
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Chargement...</div>
+  } @else {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Sévérité</th>
+            <th>Audit</th>
+            <th>Date Détection</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (nc of nonConformites(); track nc.id) {
+            <tr>
+              <td>{{ nc.id }}</td>
+              <td class="description">{{ nc.description }}</td>
+              <td>
+                <span [class]="'badge ' + getSeveriteClass(nc.severite)">
+                  {{ nc.severite }}
+                </span>
+              </td>
+              <td>{{ getAuditName(nc.auditId) }}</td>
+              <td>{{ nc.dateDetection }}</td>
+              <td>
+                <span [class]="'badge ' + getStatutClass(nc.statut)">
+                  {{ nc.statut.replace('_', ' ') }}
+                </span>
+              </td>
+              <td class="actions">
+                <button class="btn-edit" (click)="openEditModal(nc)" title="Modifier">
+                  ✏️
+                </button>
+                <button class="btn-delete" (click)="deleteNC(nc)" title="Supprimer">
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty">Aucune non-conformité trouvée</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Modal -->
+  @if (showModal()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editingNC() ? 'Modifier' : 'Créer' }} une non-conformité</h2>
+          <button class="btn-close" (click)="closeModal()">×</button>
+        </div>
+        
+        <form (ngSubmit)="saveNC()">
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea 
+              [(ngModel)]="formData.description" 
+              name="description"
+              rows="4"
+              required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Sévérité *</label>
+            <select [(ngModel)]="formData.severite" name="severite" required>
+              <option value="MINEURE">Mineure</option>
+              <option value="MAJEURE">Majeure</option>
+              <option value="CRITIQUE">Critique</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Audit associé *</label>
+            <select [(ngModel)]="formData.auditId" name="auditId" required>
+              <option [value]="0" disabled>Sélectionnez un audit</option>
+              @for (audit of audits(); track audit.id) {
+                <option [value]="audit.id">{{ audit.titre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Statut *</label>
+            <select [(ngModel)]="formData.statut" name="statut" required>
+              <option value="OUVERTE">Ouverte</option>
+              <option value="EN_TRAITEMENT">En traitement</option>
+              <option value="RESOLUE">Résolue</option>
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeModal()">
+              Annuler
+            </button>
+            <button type="submit" class="btn-primary">
+              {{ editingNC() ? 'Modifier' : 'Créer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

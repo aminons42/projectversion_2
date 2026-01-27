@@ -1,0 +1,158 @@
+<html>
+<head>
+    
+</head>
+<body>
+  <div class="flex h-screen w-full">
+    
+    <div class="flex-1 flex flex-col items-center justify-start pt-13 px-8 bg-white">
+      
+      <div class="flex flex-col items-center mb-10  ">
+        <img src="/assets/image1.jpg" alt="Logo" class="w-24 h-auto mb-4">
+        <h2 class="text-3xl font-bold text-gray-800">Welcome Back</h2>
+        <p class="text-gray-500 text-sm mt-1">Please enter your details to sign in</p>
+      </div>
+
+      <div class="w-full max-w-sm">
+        
+        <form (ngSubmit)="onLogin()" class="flex flex-col gap-6">
+          
+          <div class="flex flex-col gap-2">
+            <label for="username" class="text-sm font-medium text-gray-700">Username</label>
+            <input 
+              type="text" 
+              id="username" 
+              name="username"
+              [(ngModel)]="username"
+              required 
+              class="border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
+              placeholder="Enter your username"
+            >
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password"
+              [(ngModel)]="password"
+              required 
+              class="border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
+              placeholder="••••••••"
+            >
+          </div>
+
+          <button 
+            type="submit" 
+            class="bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md mt-2"
+          >
+            Sign In
+          </button>
+
+        </form>
+
+        <div class="text-center mt-4">
+            <a (click)="onRegister()" href="#" class="text-sm text-blue-500 hover:underline">Register </a>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="flex-1 hidden md:block"> <img src="/assets/image.png" alt="Background" class="object-cover w-full h-full">
+    </div>
+
+  </div>
+
+  <!-- Modal Register (apparaît par-dessus tout) -->
+<div *ngIf="showRegisterModal" class="modal-overlay" (click)="closeRegisterModal()">
+  
+  <!-- Box du modal (empêche la fermeture au click) -->
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Create Account</h2>
+      <button (click)="closeRegisterModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
+        ×
+      </button>
+    </div>
+    
+    <!-- Formulaire -->
+    <form (ngSubmit)="onRegisterSubmit()" class="flex flex-col gap-4">
+      
+      <!-- Username -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">Username</label>
+        <input 
+          type="text" 
+          [(ngModel)]="registerUsername"
+          name="registerUsername"
+          required 
+          class="border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
+          placeholder="Enter username"
+        >
+      </div>
+      
+      <!-- Password -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">Password</label>
+        <input 
+          type="password" 
+          [(ngModel)]="registerPassword"
+          name="registerPassword"
+          required 
+          class="border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
+          placeholder="Enter password"
+        >
+      </div>
+      
+      <!-- Nom -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">Nom</label>
+        <input 
+          type="text" 
+          [(ngModel)]="registerNom"
+          name="registerNom"
+          required 
+          class="border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
+          placeholder="Enter last name"
+        >
+      </div>
+      
+      <!-- Prenom -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">Prenom</label>
+        <input 
+          type="text" 
+          [(ngModel)]="registerPrenom"
+          name="registerPrenom"
+          required 
+          class="border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
+          placeholder="Enter first name"
+        >
+      </div>
+      
+      <!-- Boutons -->
+      <div class="flex gap-3 mt-4">
+        <button 
+          type="button"
+          (click)="closeRegisterModal()"
+          class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+        <button 
+          type="submit"
+          class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700"
+        >
+          Register
+        </button>
+      </div>
+      
+    </form>
+  </div>
+</div>
+</body>
+</html>

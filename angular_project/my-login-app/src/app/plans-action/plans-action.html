@@ -1,0 +1,358 @@
+<div class="plans-action-container">
+  <!-- TABS HEADER -->
+  <div class="tabs-header">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'plans'"
+      (click)="activeTab = 'plans'">
+      📋 Plans d'Action
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'actions'"
+      (click)="activeTab = 'actions'">
+      ✓ Actions
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'escalades'"
+      (click)="activeTab = 'escalades'">
+      ⚠️ Escalades
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'suivis'"
+      (click)="activeTab = 'suivis'">
+      📊 Suivis
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'verifications'"
+      (click)="activeTab = 'verifications'">
+      ✅ Vérifications
+    </button>
+  </div>
+
+  <!-- PLANS TAB -->
+  <div *ngIf="activeTab === 'plans'" class="tab-content">
+    <div class="header-actions">
+      <h2>Plans d'Action</h2>
+      <button class="btn-primary" (click)="openPlanModal()">+ Nouveau Plan</button>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Responsable</th>
+          <th>Date Début</th>
+          <th>Date Échéance</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let plan of plans" class="table-row">
+          <td><strong>{{ plan.titre }}</strong></td>
+          <td>{{ plan.responsableId }}</td>
+          <td>{{ plan.dateDebut | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ plan.dateEcheance | date: 'dd/MM/yyyy' }}</td>
+          <td class="actions-cell">
+            <button class="btn-edit" (click)="openPlanModal(plan)">Modifier</button>
+            <button class="btn-delete" (click)="deletePlan(plan.id)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACTIONS TAB -->
+  <div *ngIf="activeTab === 'actions'" class="tab-content">
+    <div class="header-actions">
+      <h2>Actions</h2>
+      <button class="btn-primary" (click)="openActionModal()">+ Nouvelle Action</button>
+    </div>
+    <div class="filters">
+      <select [(ngModel)]="selectedPlanId" (change)="applyActionFilters()" class="filter-select">
+        <option [value]="null">Tous les plans</option>
+        <option *ngFor="let plan of plans" [value]="plan.id">{{ plan.titre }}</option>
+      </select>
+      <select [(ngModel)]="selectedStatus" (change)="applyActionFilters()" class="filter-select">
+        <option value="all">Tous les statuts</option>
+        <option value="À_FAIRE">À Faire</option>
+        <option value="EN_COURS">En Cours</option>
+        <option value="TERMINE">Terminée</option>
+        <option value="EN_RETARD">En Retard</option>
+      </select>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Priorité</th>
+          <th>Statut</th>
+          <th>Assigné À</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let action of actions" class="table-row">
+          <td><strong>{{ action.titre }}</strong></td>
+          <td><span [class]="getPriorityColor(action.priorite)">{{ action.priorite }}</span></td>
+          <td><span [class]="getStatusClass(action.statutAction)">{{ action.statutAction }}</span></td>
+          <td>{{ action.assigneA || 'N/A' }}</td>
+          <td class="actions-cell">
+            <button class="btn-success" (click)="markActionComplete(action)" [disabled]="action.statutAction === 'TERMINE'">✓</button>
+            <button class="btn-warning" (click)="markActionLate(action)">⚠️</button>
+            <button class="btn-edit" (click)="openActionModal(action)">Éditer</button>
+            <button class="btn-delete" (click)="deleteAction(action.id)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ESCALADES TAB -->
+  <div *ngIf="activeTab === 'escalades'" class="tab-content">
+    <div class="header-actions">
+      <h2>Escalades</h2>
+      <button class="btn-primary" (click)="openEscaladeModal()">+ Nouvelle Escalade</button>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Motif</th>
+          <th>Niveau</th>
+          <th>Date Escalade</th>
+          <th>Action</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let escalade of escalades" class="table-row">
+          <td><strong>{{ escalade.motif }}</strong></td>
+          <td><span class="badge badge-escalade">{{ getEscaladeLevel(escalade.niveauEscalade) }}</span></td>
+          <td>{{ escalade.dateEscalade | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ escalade.actionId }}</td>
+          <td class="actions-cell">
+            <button class="btn-edit" (click)="openEscaladeModal(escalade)">Modifier</button>
+            <button class="btn-delete" (click)="deleteEscalade(escalade.id)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SUIVIS TAB -->
+  <div *ngIf="activeTab === 'suivis'" class="tab-content">
+    <div class="header-actions">
+      <h2>Suivis d'Actions</h2>
+      <button class="btn-primary" (click)="openSuiviModal()">+ Nouveau Suivi</button>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Statut</th>
+          <th>Date</th>
+          <th>Remarques</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let suivi of suivis" class="table-row">
+          <td>{{ suivi.actionId }}</td>
+          <td><span [class]="getStatusClass(suivi.statut)">{{ suivi.statut }}</span></td>
+          <td>{{ suivi.dateSuivi | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ suivi.remarques }}</td>
+          <td class="actions-cell">
+            <button class="btn-edit" (click)="openSuiviModal(suivi)">Modifier</button>
+            <button class="btn-delete" (click)="deleteSuivi(suivi.id)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- VERIFICATIONS TAB -->
+  <div *ngIf="activeTab === 'verifications'" class="tab-content">
+    <div class="header-actions">
+      <h2>Vérifications</h2>
+      <button class="btn-primary" (click)="openVerificationModal()">+ Nouvelle Vérification</button>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Résultat</th>
+          <th>Date</th>
+          <th>Observateurs</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let verification of verifications" class="table-row">
+          <td>{{ verification.actionId }}</td>
+          <td><span [class]="'badge badge-' + verification.resultat.toLowerCase()">{{ verification.resultat }}</span></td>
+          <td>{{ verification.dateVerification | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ verification.observateurs }}</td>
+          <td class="actions-cell">
+            <button class="btn-edit" (click)="openVerificationModal(verification)">Modifier</button>
+            <button class="btn-delete" (click)="deleteVerification(verification.id)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ isEditMode ? 'Modifier' : 'Créer' }} - {{ activeTab | titlecase }}</h3>
+        <button class="close-btn" (click)="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- PLANS FORM -->
+        <form *ngIf="activeTab === 'plans'" (ngSubmit)="submitPlanForm()">
+          <div class="form-group">
+            <label>Titre</label>
+            <input type="text" [(ngModel)]="formData.titre" name="titre" required>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea [(ngModel)]="formData.description" name="description"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Date Début</label>
+              <input type="date" [(ngModel)]="formData.dateDebut" name="dateDebut" required>
+            </div>
+            <div class="form-group">
+              <label>Date Échéance</label>
+              <input type="date" [(ngModel)]="formData.dateEcheance" name="dateEcheance" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Responsable ID</label>
+            <input type="text" [(ngModel)]="formData.responsableId" name="responsableId" required>
+          </div>
+          <button type="submit" class="btn-submit">Enregistrer</button>
+        </form>
+
+        <!-- ACTIONS FORM -->
+        <form *ngIf="activeTab === 'actions'" (ngSubmit)="submitActionForm()">
+          <div class="form-group">
+            <label>Titre</label>
+            <input type="text" [(ngModel)]="formData.titre" name="titre" required>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea [(ngModel)]="formData.description" name="description"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Priorité</label>
+              <select [(ngModel)]="formData.priorite" name="priorite">
+                <option>BASSE</option>
+                <option>MOYENNE</option>
+                <option>HAUTE</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Plan</label>
+              <select [(ngModel)]="formData.planId" name="planId">
+                <option *ngFor="let plan of plans" [value]="plan.id">{{ plan.titre }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Assigné À</label>
+            <input type="text" [(ngModel)]="formData.assigneA" name="assigneA">
+          </div>
+          <button type="submit" class="btn-submit">Enregistrer</button>
+        </form>
+
+        <!-- ESCALADES FORM -->
+        <form *ngIf="activeTab === 'escalades'" (ngSubmit)="submitEscaladeForm()">
+          <div class="form-group">
+            <label>Motif</label>
+            <input type="text" [(ngModel)]="formData.motif" name="motif" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Niveau</label>
+              <select [(ngModel)]="formData.niveauEscalade" name="niveauEscalade">
+                <option>MANAGERS</option>
+                <option>DIRECTION</option>
+                <option>CEE</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date Escalade</label>
+              <input type="datetime-local" [(ngModel)]="formData.dateEscalade" name="dateEscalade" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Action ID</label>
+            <input type="text" [(ngModel)]="formData.actionId" name="actionId" required>
+          </div>
+          <button type="submit" class="btn-submit">Enregistrer</button>
+        </form>
+
+        <!-- SUIVIS FORM -->
+        <form *ngIf="activeTab === 'suivis'" (ngSubmit)="submitSuiviForm()">
+          <div class="form-group">
+            <label>Action ID</label>
+            <input type="text" [(ngModel)]="formData.actionId" name="actionId" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Statut</label>
+              <select [(ngModel)]="formData.statut" name="statut">
+                <option>À_FAIRE</option>
+                <option>EN_COURS</option>
+                <option>TERMINE</option>
+                <option>EN_RETARD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date Suivi</label>
+              <input type="date" [(ngModel)]="formData.dateSuivi" name="dateSuivi" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Remarques</label>
+            <textarea [(ngModel)]="formData.remarques" name="remarques"></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Enregistrer</button>
+        </form>
+
+        <!-- VERIFICATIONS FORM -->
+        <form *ngIf="activeTab === 'verifications'" (ngSubmit)="submitVerificationForm()">
+          <div class="form-group">
+            <label>Action ID</label>
+            <input type="text" [(ngModel)]="formData.actionId" name="actionId" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Résultat</label>
+              <select [(ngModel)]="formData.resultat" name="resultat">
+                <option>CONFORME</option>
+                <option>NON_CONFORME</option>
+                <option>PARTIEL</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date Vérification</label>
+              <input type="date" [(ngModel)]="formData.dateVerification" name="dateVerification" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Observateurs</label>
+            <input type="text" [(ngModel)]="formData.observateurs" name="observateurs">
+          </div>
+          <button type="submit" class="btn-submit">Enregistrer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,219 @@
+<div class="dashboard-layout">
+  
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1 class="logo">HSE Synergy</h1>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a class="nav-item active">
+        <span class="icon">📊</span>
+        <span>Tableau de Bord</span>
+      </a>
+      <a class="nav-item" [routerLink]="['/incidents']">
+        <span class="icon">🚨</span>
+        <span>Incidents</span>
+      </a>
+      <a class="nav-item" (click)="navigateTo('/audits')">
+        <span class="icon">📋</span>
+        <span>Audits</span>
+      </a>
+      <a class="nav-item" (click)="navigateTo('/plans-actions')">
+        <span class="icon">✅</span>
+        <span>Plans d'Action</span>
+      </a>
+      <a class="nav-item" (click)="navigateTo('/non-conformites')">
+        <span class="icon">⚠️</span>
+        <span>Non-Conformités</span>
+      </a>
+      <a class="nav-item" (click)="navigateTo('/templates')">
+        <span class="icon">📝</span>
+        <span>Templates</span>
+      </a>
+      <a class="nav-item" *ngIf="isAdmin()" (click)="navigateTo('/utilisateurs')">
+        <span class="icon">👥</span>
+        <span>Utilisateurs</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    
+    <!-- Header -->
+    <header class="header">
+      <h2 class="page-title">Tableau de Bord</h2>
+      
+      <div class="user-section">
+        <div class="user-info" (click)="toggleUserMenu()">
+          <div class="avatar">{{ getInitials(currentUser) }}</div>
+          <div class="user-details">
+            <span class="user-name">Bonjour, {{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+            <span class="user-role">{{ currentUser?.roles[0]?.nom }}</span>
+          </div>
+          <span class="dropdown-icon">▼</span>
+        </div>
+        
+        <div class="user-menu" *ngIf="showUserMenu">
+          <a class="menu-item">Profil</a>
+          <a class="menu-item" (click)="logout()">Déconnexion</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- KPI Cards -->
+    <section class="kpi-section">
+      <div class="kpi-card kpi-red">
+        <div class="kpi-icon">🔔</div>
+        <div class="kpi-content">
+          <h3 class="kpi-title">Incidents Critiques</h3>
+          <div class="kpi-value">{{ incidentsCritiques }}</div>
+          <div class="kpi-subtitle">+1 depuis hier</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-orange">
+        <div class="kpi-icon">⏰</div>
+        <div class="kpi-content">
+          <h3 class="kpi-title">Actions en Retard</h3>
+          <div class="kpi-value">{{ actionsEnRetard }}</div>
+          <div class="kpi-subtitle">Urgent à traiter</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-green">
+        <div class="kpi-icon">🛡️</div>
+        <div class="kpi-content">
+          <h3 class="kpi-title">Conformité Globale</h3>
+          <div class="kpi-value">{{ conformiteGlobale }}%</div>
+          <div class="kpi-subtitle">Basé sur les derniers audits</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-blue">
+        <div class="kpi-icon">👥</div>
+        <div class="kpi-content">
+          <h3 class="kpi-title">Employés Actifs</h3>
+          <div class="kpi-value">{{ employesActifs }}</div>
+          <div class="kpi-subtitle">Sur toute l'entreprise</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+      
+      <!-- Left Column -->
+      <div class="left-column">
+        
+        <!-- Derniers Incidents -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Derniers Signalements</h3>
+            <button class="btn-link">Voir tout</button>
+          </div>
+          
+          <div class="table-container">
+            <table class="data-table" *ngIf="derniersIncidents.length > 0; else noIncidents">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Lieu</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let incident of derniersIncidents">
+                  <td>{{ incident.dateTime | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ incident.typeIncident }}</td>
+                  <td>{{ incident.location }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusBadgeClass(incident.statut)">
+                      {{ incident.statut }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <ng-template #noIncidents>
+              <p class="empty-state">Aucun incident récent</p>
+            </ng-template>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        
+        <!-- Mes Tâches -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Mes Tâches</h3>
+          </div>
+          
+          <div class="task-list" *ngIf="mesTaches.length > 0; else noTasks">
+            <div class="task-item" *ngFor="let tache of mesTaches">
+              <input type="checkbox" class="task-checkbox">
+              <div class="task-info">
+                <div class="task-description">{{ tache.description }}</div>
+                <div class="task-meta">
+                  <span class="badge" [ngClass]="getStatusBadgeClass(tache.statut)">
+                    {{ tache.statut }}
+                  </span>
+                  <span class="task-date">{{ tache.dateEcheance | date:'dd/MM' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <ng-template #noTasks>
+            <p class="empty-state">Aucune tâche en cours</p>
+          </ng-template>
+        </div>
+
+        <!-- Prochains Audits -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Prochains Audits</h3>
+          </div>
+          
+          <div class="audit-list" *ngIf="prochainsAudits.length > 0; else noAudits">
+            <div class="audit-item" *ngFor="let audit of prochainsAudits">
+              <div class="audit-date">
+                <div class="audit-day">{{ audit.dateDebut | date:'dd' }}</div>
+                <div class="audit-month">{{ audit.dateDebut | date:'MMM' }}</div>
+              </div>
+              <div class="audit-info">
+                <div class="audit-title">{{ audit.titre }}</div>
+                <div class="audit-dept">{{ audit.departement }}</div>
+              </div>
+            </div>
+          </div>
+          
+          <ng-template #noAudits>
+            <p class="empty-state">Aucun audit planifié</p>
+          </ng-template>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Floating Action Button -->
+  <div class="fab-container">
+    <button class="fab">
+      <span class="fab-icon">+</span>
+    </button>
+    <div class="fab-menu">
+      <a class="fab-option">🚨 Signaler un Incident</a>
+      <a class="fab-option">📋 Démarrer un Audit</a>
+    </div>
+  </div>
+
+</div>

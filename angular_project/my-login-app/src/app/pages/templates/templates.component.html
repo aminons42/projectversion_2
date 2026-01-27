@@ -1,0 +1,173 @@
+<div class="container">
+  @if (!selectedTemplate()) {
+    <!-- Liste des templates -->
+    <div class="header">
+      <h1>Templates de Checklist</h1>
+      <button class="btn-primary" (click)="openCreateModal()">
+        + Nouveau Template
+      </button>
+    </div>
+
+    @if (loading()) {
+      <div class="loading">Chargement...</div>
+    } @else {
+      <div class="templates-grid">
+        @for (template of templates(); track template.id) {
+          <div class="template-card">
+            <h3>{{ template.nom }}</h3>
+            <p class="description">{{ template.description }}</p>
+            <div class="card-footer">
+              <button class="btn-view" (click)="viewTemplate(template)">
+                👁️ Voir
+              </button>
+              <button class="btn-delete" (click)="deleteTemplate(template)">
+                🗑️ Supprimer
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty">Aucun template trouvé</div>
+        }
+      </div>
+    }
+  } @else {
+    <!-- Détails du template -->
+    <div class="header">
+      <div>
+        <button class="btn-back" (click)="closeDetails()">← Retour</button>
+        <h1>{{ selectedTemplate()!.nom }}</h1>
+        <p class="subtitle">{{ selectedTemplate()!.description }}</p>
+      </div>
+      <button class="btn-primary" (click)="openQuestionModal()">
+        + Ajouter une Question
+      </button>
+    </div>
+
+    <div class="questions-list">
+      <h2>Questions du Template</h2>
+      @if (selectedTemplate()!.questions && selectedTemplate()!.questions.length > 0) {
+        <div class="questions-container">
+          @for (question of selectedTemplate()!.questions; track question.id) {
+            <div class="question-item">
+              <span class="question-number">{{ question.ordre }}</span>
+              <span class="question-text">{{ question.question }}</span>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty">Aucune question définie pour ce template</div>
+      }
+    </div>
+  }
+
+  <!-- Modal Création Template -->
+  @if (showModal()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Créer un Template</h2>
+          <button class="btn-close" (click)="closeModal()">×</button>
+        </div>
+        
+        <form (ngSubmit)="createTemplate()">
+          <div class="form-group">
+            <label>Nom du template *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="templateForm.nom" 
+              name="nom"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label>Catégorie *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="templateForm.categorie" 
+              name="categorie"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea 
+              [(ngModel)]="templateForm.description" 
+              name="description"
+              rows="4"
+              required></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeModal()">
+              Annuler
+            </button>
+            <button type="submit" class="btn-primary">
+              Créer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Ajout Question -->
+  @if (showQuestionModal()) {
+    <div class="modal-overlay" (click)="closeQuestionModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Ajouter une Question</h2>
+          <button class="btn-close" (click)="closeQuestionModal()">×</button>
+        </div>
+        
+        <form (ngSubmit)="addQuestion()">
+          <div class="form-group">
+            <label>Question *</label>
+            <textarea 
+              [(ngModel)]="questionForm.question" 
+              name="question"
+              rows="3"
+              required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Ordre *</label>
+            <input 
+              type="number" 
+              [(ngModel)]="questionForm.ordre" 
+              name="ordre"
+              min="1"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label>Type de réponse *</label>
+            <select [(ngModel)]="questionForm.typeReponse" name="typeReponse" required>
+              <option value="OUI_NON">Oui/Non</option>
+              <option value="TEXTE">Texte libre</option>
+              <option value="NOTE">Notation</option>
+            </select>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label>
+              <input 
+                type="checkbox" 
+                [(ngModel)]="questionForm.obligatoire" 
+                name="obligatoire">
+              Question obligatoire
+            </label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeQuestionModal()">
+              Annuler
+            </button>
+            <button type="submit" class="btn-primary">
+              Ajouter
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

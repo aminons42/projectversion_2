@@ -1,0 +1,19 @@
+# Angular / Node
+**/node_modules/
+**/dist/
+.angular/
+coverage/
+
+# Logs
+*.log
+
+# Env
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
