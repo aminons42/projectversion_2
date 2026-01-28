@@ -88,7 +88,7 @@ public class CheckListeService {
         }
 
         List<QuestionAuditDTO> questions = questionRepository
-                .findByChecklistTemplateIdOrderByOrdre(template.getId())
+                .findByChecklistIdOrderByOrdre(template.getId())
                 .stream()
                 .map(this::convertQuestionToDTO)
                 .collect(Collectors.toList());

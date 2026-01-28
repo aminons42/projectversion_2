@@ -81,7 +81,7 @@ public class AuditService {
 
         // Initialiser les réponses vides
         List<QuestionAudit> questions = questionRepo
-                .findByChecklistTemplateIdOrderByOrdre(audit.getChecklistTemplate().getId());
+                .findByChecklistIdOrderByOrdre(audit.getChecklistTemplate().getId());
 
         for (QuestionAudit question : questions) {
             ReponseAUdit reponse = new ReponseAUdit();

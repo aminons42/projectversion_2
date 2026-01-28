@@ -11,7 +11,7 @@ public interface ActionRepo extends JpaRepository<Action, Long> {
     List<Action> findByPlanActionId(Long planActionId);
     List<Action> findByStatut(StatutAction statut);
     List<Action> findByResponsableId(Long responsableId);
-    List<Action> findByTypeAction(TypeAction typeAction);
+    List<Action> findByType(TypeAction type);
 
 
 }

@@ -33,7 +33,7 @@ public class ActionController {
     }
 
 
-    @DeleteMapping("/{actionId")
+    @DeleteMapping("/{actionId}")
     public void deleteAction(@PathVariable Long actionId) {
         actionService.deleteAction(actionId);
     }

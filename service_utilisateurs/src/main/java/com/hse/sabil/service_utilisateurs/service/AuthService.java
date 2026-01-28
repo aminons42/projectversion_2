@@ -53,6 +53,7 @@ public class AuthService {
             utilisateur_repo.save(user);
     }
     public JwtAuthResponse login(LoginRequest request){
+        // Authentification via Spring Security (recommandé)
         auth_manager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -60,14 +61,13 @@ public class AuthService {
                 )
         );
 
-        UserDetails userDetails = utilisateur_repo.findByUsername(request.getUsername())
+        // Charger l'utilisateur authentifié
+        Utilisateur user = utilisateur_repo.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
-
-        String token = jwtutil.generateToken(userDetails);
-
+        // Générer le token JWT
+        String token = jwtutil.generateToken(user);
 
         return new JwtAuthResponse(token);
-
     }
 }

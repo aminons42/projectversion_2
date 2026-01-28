@@ -1,8 +1,8 @@
 export const environment = {
   gatewayUrl: 'http://localhost:8084',
   
-  // Routes du gateway
-  authUrl: 'http://localhost:8084/api/auth',
+  // Routes directes au service (contournement du Gateway pour le debug)
+  authUrl: 'http://localhost:8080/api/auth',
   usersUrl: 'http://localhost:8084/api/users',
   incidentsUrl: 'http://localhost:8084/api/incidents',
   auditsUrl: 'http://localhost:8084/api/audits',

@@ -20,13 +20,9 @@ public class MicroServiceAuditApplication {
    @Bean
     public CommandLineRunner start(AuditRepo auditRepo) {
         return args -> {
-            auditRepo.save(Audit.builder().titre("rjijr").departement("ihdiuhu").build());
-
-
-
+            // Commented out - requires valid auditeur_id
+            // auditRepo.save(Audit.builder().titre("rjijr").departement("ihdiuhu").build());
         };
-
-
    }
 
 

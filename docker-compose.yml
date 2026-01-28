@@ -58,7 +58,7 @@ services:
       MYSQL_USER: hse_user
       MYSQL_PASSWORD: HseSecure2026!
     ports:
-      - "3309:3306"
+      - "3311:3306"
     volumes:
       - mysql_audits_data:/var/lib/mysql
       - ./init-scripts/03-audits.sql:/docker-entrypoint-initdb.d/03-init.sql

@@ -23,9 +23,8 @@ public class AuthController {
     // 5. La ROUTE pour le LOGIN
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        // On appelle la méthode login du service
         JwtAuthResponse jwtAuthResponse = authService.login(loginRequest);
-        return ResponseEntity.ok(jwtAuthResponse); // Renvoie un statut "200 OK" avec le token
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     // 6. La ROUTE pour l'INSCRIPTION

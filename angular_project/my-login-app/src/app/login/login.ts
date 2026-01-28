@@ -66,6 +66,12 @@ export class Login {
   
   // SOUMETTRE REGISTER
   onRegisterSubmit() {
+    // Vérifier que tous les champs sont remplis
+    if (!this.registerUsername || !this.registerPassword || !this.registerNom || !this.registerPrenom) {
+      this.notificationService.error('Tous les champs sont obligatoires');
+      return;
+    }
+
     const registerRequest: RegisterRequest = {
       username: this.registerUsername,
       password: this.registerPassword,
@@ -73,13 +79,33 @@ export class Login {
       prenom: this.registerPrenom
     };
     
+    console.log('Envoi de l\'inscription:', registerRequest);
+    
     this.authService.register(registerRequest).subscribe({
-      next: () => {
+      next: (response) => {
+        console.log('Inscription réussie:', response);
+        this.notificationService.success('Inscription réussie! Redirection vers la page de connexion...');
         this.closeRegisterModal();
-        this.notificationService.success('Inscription réussie! Vous pouvez maintenant vous connecter.');
+        // Redirection vers login après 1 seconde
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1000);
       },
       error: (err) => {
-        const message = err.error?.message || err.message || 'Erreur lors de l\'inscription';
+        console.error('Erreur d\'inscription:', err);
+        let message = 'Erreur lors de l\'inscription';
+        
+        // Extraire le message d'erreur correctement
+        if (err.error) {
+          if (typeof err.error === 'string') {
+            message = err.error;
+          } else if (err.error.message) {
+            message = err.error.message;
+          }
+        } else if (err.message) {
+          message = err.message;
+        }
+        
         this.notificationService.error(message);
       }
     });

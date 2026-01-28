@@ -10,6 +10,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface QuestionRepo extends JpaRepository<QuestionAudit,Long> {
-    List<QuestionAudit> findByChecklistTemplateIdOrderByOrdre(Long templateId);
+    List<QuestionAudit> findByChecklistIdOrderByOrdre(Long checklistId);
 }
 

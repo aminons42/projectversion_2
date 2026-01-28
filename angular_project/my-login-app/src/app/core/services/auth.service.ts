@@ -29,9 +29,14 @@ export class AuthService {
       loginRequest
     ).pipe(
       tap(response => {
-        // Si succès, sauvegarde le token et l'user
+        // Sauvegarder le token
         localStorage.setItem('token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        
+        // Sauvegarder l'user seulement s'il existe dans la réponse
+        if (response.user) {
+          localStorage.setItem('user', JSON.stringify(response.user));
+        }
+        
         // Redirection automatique vers le dashboard
         this.router.navigate(['/dashboard']);
       })
@@ -39,17 +44,11 @@ export class AuthService {
   }
   
   // REGISTER
-  register(registerRequest: RegisterRequest): Observable<string> {
-    return this.http.post<string>(
+  register(registerRequest: RegisterRequest): Observable<any> {
+    return this.http.post<any>(
       `${this.apiUrl}/register`,
-      registerRequest
-    ).pipe(
-      tap(message => {
-        // Afficher le message de succès
-        alert(message); // "Utilisateur enregistré avec succès!"
-        // Redirection vers la page login
-        this.router.navigate(['/login']);
-      })
+      registerRequest,
+      { responseType: 'text' as 'json' }  // Accepter les réponses texte
     );
   }
   
@@ -73,6 +72,14 @@ export class AuthService {
   // Récupérer l'utilisateur
   getUser(): User | null {
     const userJson = localStorage.getItem('user');
-    return userJson ? JSON.parse(userJson) : null;
+    if (!userJson || userJson === 'undefined') {
+      return null;
+    }
+    try {
+      return JSON.parse(userJson);
+    } catch (e) {
+      console.error('Erreur parsing user:', e);
+      return null;
+    }
   }
 }

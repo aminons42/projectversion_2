@@ -141,7 +141,7 @@ public class ActionService {
                 .collect(Collectors.toList());
     }
     public List<ActionDTO> getActionsByType(TypeAction typeAction) {
-        List<Action> actions = actionRepo.findByTypeAction(typeAction);
+        List<Action> actions = actionRepo.findByType(typeAction);
 
         return actions.stream()
                 .map(a -> convertToDTO(a, getUserById(a.getResponsableId())))
