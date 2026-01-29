@@ -50,13 +50,13 @@
           <div class="avatar">{{ getInitials(currentUser) }}</div>
           <div class="user-details">
             <span class="user-name">Bonjour, {{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
-            <span class="user-role">{{ currentUser?.roles[0]?.nom }}</span>
+            <span class="user-role">{{ currentUser?.roles && currentUser?.roles.length > 0 ? currentUser?.roles[0]?.nom : 'Utilisateur' }}</span>
           </div>
           <span class="dropdown-icon">▼</span>
         </div>
         
         <div class="user-menu" *ngIf="showUserMenu">
-          <a class="menu-item">Profil</a>
+          <a class="menu-item" (click)="navigateTo('/profil')">Profil</a>
           <a class="menu-item" (click)="logout()">Déconnexion</a>
         </div>
       </div>

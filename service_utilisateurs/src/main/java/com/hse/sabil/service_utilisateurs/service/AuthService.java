@@ -68,6 +68,10 @@ public class AuthService {
         // Générer le token JWT
         String token = jwtutil.generateToken(user);
 
-        return new JwtAuthResponse(token);
+        // Retourner le token ET les infos utilisateur
+        return new JwtAuthResponse(
+            token,
+            JwtAuthResponse.UserInfo.fromUtilisateur(user)
+        );
     }
 }

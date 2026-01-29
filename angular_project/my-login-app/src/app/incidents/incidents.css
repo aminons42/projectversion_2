@@ -133,6 +133,11 @@
   color: #065f46;
 }
 
+.badge-warning {
+  background-color: #ffedd5;
+  color: #9a3412;
+}
+
 .action-buttons {
   display: flex;
   gap: 0.5rem;

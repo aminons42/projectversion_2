@@ -1,5 +1,5 @@
 export type IncidentType = 'CHUTE'|'FEU'|'FUITE_CHIMIQUE'|'PRESQU_ACCIDENT'|'AUTRE';
-export type IncidentStatus = 'OUVERT' | 'FERME';
+export type IncidentStatus = 'OUVERT' | 'EN_COURS' | 'RESOLU' | 'FERME';
 
 export interface Incident {
   id: number;

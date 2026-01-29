@@ -30,7 +30,7 @@ export class IncidentsPage implements OnInit {
   
   // Types et statuts disponibles
   incidentTypes: IncidentType[] = ['CHUTE', 'FEU', 'FUITE_CHIMIQUE', 'PRESQU_ACCIDENT', 'AUTRE'];
-  incidentStatuses: IncidentStatus[] = ['OUVERT', 'FERME'];
+  incidentStatuses: IncidentStatus[] = ['OUVERT', 'EN_COURS', 'RESOLU', 'FERME'];
 
   constructor(
     private incidentService: IncidentService,
@@ -115,7 +115,9 @@ export class IncidentsPage implements OnInit {
   }
 
   getStatusClass(statut: IncidentStatus): string {
-    return statut === 'OUVERT' ? 'badge-danger' : 'badge-success';
+    if (statut === 'OUVERT') return 'badge-danger';
+    if (statut === 'EN_COURS') return 'badge-warning';
+    return 'badge-success';
   }
 
   getTypeColor(type: IncidentType): string {

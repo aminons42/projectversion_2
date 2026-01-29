@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/incidents")
-@CrossOrigin("*")
 public class IncidentController {
 
     private final IncidentService incidentService;
