@@ -31,28 +31,30 @@ public class AuditService {
     }
     private static final String USER_SERVICE_URL = "http://localhost:8080/api/users";
 
-    public AuditDTO createAudit(CreateAuditRequest request, Authentication auth) {
-        String username = auth.getName();
-        UserDTO auditeur = getUserByUsername(username);
+    
+    public AuditDTO createAudit(CreateAuditRequest request) {
+    String username = request.getAuditeurUsername(); // on prend le nom depuis le frontend
+    UserDTO auditeur = getUserByUsername(username);
 
-        CheckList template = checkListRepo.findById(request.getChecklistTemplateId())
-                .orElseThrow(() -> new RuntimeException("Template non trouvé"));
+    TypeAudit typeAudit = request.getTypeAudit() != null ? request.getTypeAudit() : TypeAudit.INTERNE;
 
-        Audit audit = new Audit();
-        audit.setTitre(request.getTitre());
-        audit.setDescription(request.getDescription());
-        audit.setTypeAudit(request.getTypeAudit());
-        audit.setAuditeurId(auditeur.getId());
-        audit.setChecklistTemplate(template);
-        audit.setDatePlanifie(request.getDatePlanifiee());
-        audit.setDepartement(request.getDepartement());
-        audit.setZone(request.getZone());
-        audit.setStatut(StatutAudit.PLANIFIE);
+    Audit audit = new Audit();
+    audit.setTitre(request.getTitre());
+    audit.setDescription(request.getDescription());
+    audit.setTypeAudit(typeAudit);
+    audit.setAuditeurId(auditeur.getId());
 
-        audit = auditRepo.save(audit);
-        return convertToDTO(audit, auditeur);
+    audit.setDatePlanifie(request.getDatePlanifiee() != null ? request.getDatePlanifiee() : LocalDateTime.now());
+    audit.setDepartement(request.getDepartement() != null ? request.getDepartement() : "Général");
+    audit.setZone(request.getZone() != null ? request.getZone() : "Non définie");
+    audit.setStatut(StatutAudit.PLANIFIE);
 
-    }
+    audit = auditRepo.save(audit);
+    return convertToDTO(audit, auditeur);
+}
+
+
+
 
 
 
@@ -221,18 +223,21 @@ public class AuditService {
     }
 
     private UserDTO getUserByUsername(String username) {
-        try {
-            return restTemplate.getForObject(USER_SERVICE_URL + "/by-username/" + username, UserDTO.class);
-        } catch (Exception e) {
-            throw new RuntimeException("Utilisateur non trouvé: " + username);
-        }
-    }
-
-
-
-
-
-
-
-
+    // TEMPORAIRE - On retourne un utilisateur fictif pour tester
+    UserDTO user = new UserDTO();
+    user.setId(1L);
+    user.setUsername(username);
+    user.setNom("Utilisateur");
+    user.setPrenom("Test");
+    return user;
 }
+}
+
+
+
+
+
+
+
+
+

@@ -17,3 +17,9 @@ coverage/
 # OS
 .DS_Store
 Thumbs.db
+
+target/
+node_modules/
+dist/
+.idea/
+*.log

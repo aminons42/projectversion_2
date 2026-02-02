@@ -7,6 +7,8 @@ import { Audit, CreateAuditRequest } from '../models/audit.model';
 @Injectable({ providedIn: 'root' })
 export class AuditService {
   private apiUrl = environment.auditsUrl;
+    private templateUrl = environment.auditsUrl.replace('/audits', '/templates'); // http://localhost:8082/api/templates
+
 
   constructor(private http: HttpClient) {}
 
@@ -17,6 +19,7 @@ export class AuditService {
   getAllAudits(): Observable<Audit[]> {
     return this.http.get<Audit[]>(this.apiUrl);
   }
+  
 
   getAuditById(id: number): Observable<Audit> {
     return this.http.get<Audit>(`${this.apiUrl}/${id}`);

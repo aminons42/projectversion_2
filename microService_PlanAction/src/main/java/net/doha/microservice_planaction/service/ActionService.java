@@ -69,10 +69,11 @@ public class ActionService {
     public ActionDTO createAction(PlanAction planAction, CreateAction req) {
         Action action = new Action();
         action.setPlanAction(planAction);
+        action.setTitre(req.getTitre());
         action.setDescription(req.getDescription());
         action.setType(req.getTypeAction());
         action.setResponsableId(req.getResponsableId());
-        action.setDateEcheance(req.getDateEcheance());
+        action.setDateDebut(req.getDateDebut());
         action.setDureeEstimee(req.getDureeEstimee());
         action.setPriorite(req.getPriorite());
         action.setRessourcesNecessaires(req.getRessourcesNecessaires());

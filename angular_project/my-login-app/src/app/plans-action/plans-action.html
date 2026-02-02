@@ -32,7 +32,7 @@
       ✅ Vérifications
     </button>
   </div>
-
+  
   <!-- PLANS TAB -->
   <div *ngIf="activeTab === 'plans'" class="tab-content">
     <div class="header-actions">
@@ -211,6 +211,8 @@
         <button class="close-btn" (click)="closeModal()">✕</button>
       </div>
       <div class="modal-body">
+
+
         <!-- PLANS FORM -->
         <form *ngIf="activeTab === 'plans'" (ngSubmit)="submitPlanForm()">
           <div class="form-group">
@@ -231,6 +233,36 @@
               <input type="date" [(ngModel)]="formData.dateEcheance" name="dateEcheance" required>
             </div>
           </div>
+
+
+          <div class="form-group">
+           <label>Source</label>
+           <select [(ngModel)]="formData.source" name="source" required>
+            <option value="">--Choisir une source--</option>
+            <option value="AUDIT">Interne</option>
+            <option value="INCIDENT">INCIDENT</option>
+            <option value="AMELIORATION_CONTINUE">Amelioration Continue</option>
+            <option value="INSPECTION">Inspection</option>
+            <option value="REMONTEE_TERRAIN">Terrain</option>
+            </select>
+            </div>
+
+
+           
+            <div class="form-group">
+             <label>Type</label>
+             <select [(ngModel)]="formData.type" name="type" required>
+              <option value="">--Choisir un type--</option>
+              <option value="ACTION_CORRECTIVE">Correctif</option>
+               <option value="ACTION_PREVENTIVE">Préventif</option>
+                <option value="ACTION_AMELIORATION">Amélioration</option>
+               <option value="ACTION_URGENCE">Urgence</option>
+
+                </select>
+                </div>
+                  
+
+
           <div class="form-group">
             <label>Responsable ID</label>
             <input type="text" [(ngModel)]="formData.responsableId" name="responsableId" required>
@@ -238,65 +270,103 @@
           <button type="submit" class="btn-submit">Enregistrer</button>
         </form>
 
+
+
+    
         <!-- ACTIONS FORM -->
-        <form *ngIf="activeTab === 'actions'" (ngSubmit)="submitActionForm()">
-          <div class="form-group">
-            <label>Titre</label>
-            <input type="text" [(ngModel)]="formData.titre" name="titre" required>
-          </div>
-          <div class="form-group">
-            <label>Description</label>
-            <textarea [(ngModel)]="formData.description" name="description"></textarea>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Priorité</label>
-              <select [(ngModel)]="formData.priorite" name="priorite">
-                <option>BASSE</option>
-                <option>MOYENNE</option>
-                <option>HAUTE</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Plan</label>
-              <select [(ngModel)]="formData.planId" name="planId">
-                <option *ngFor="let plan of plans" [value]="plan.id">{{ plan.titre }}</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Assigné À</label>
-            <input type="text" [(ngModel)]="formData.assigneA" name="assigneA">
-          </div>
-          <button type="submit" class="btn-submit">Enregistrer</button>
-        </form>
+<form *ngIf="activeTab === 'actions'" (ngSubmit)="submitActionForm()">
+  <div class="form-group">
+    <label>titre</label>
+    <input type="text" [(ngModel)]="formData.titre" name="titre" required>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Type Action</label>
+      <select [(ngModel)]="formData.typeAction" name="typeAction" required>
+        <option value="ACTION_CORRECTIVE">Correctif</option>
+        <option value="ACTION_PREVENTIVE">Préventif</option>
+        <option value="ACTION_AMELIORATION">Amélioration</option>
+        <option value="ACTION_URGENCE">Urgence</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Priorité</label>
+      <select [(ngModel)]="formData.priorite" name="priorite" required>
+        <option value="BASSE">Basse</option>
+        <option value="MOYENNE">Moyenne</option>
+        <option value="HAUTE">Haute</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Plan d'Action</label>
+      <select [(ngModel)]="formData.planId" name="planId" required>
+        <option value="">-- Choisir un plan --</option>
+        <option *ngFor="let plan of plans" [value]="plan.id">{{ plan.titre }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Responsable ID</label>
+      <input type="number" [(ngModel)]="formData.responsableId" name="responsableId" required value="1">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Date Début</label>
+    <input type="date" [(ngModel)]="formData.dateDebut" name="dateDebut">
+  </div>
+  <div class="form-group">
+    <label>Ressources Nécessaires</label>
+    <textarea [(ngModel)]="formData.ressourcesNecessaires" name="ressourcesNecessaires"></textarea>
+  </div>
+  <button type="submit" class="btn-submit">Enregistrer</button>
+</form>
 
         <!-- ESCALADES FORM -->
-        <form *ngIf="activeTab === 'escalades'" (ngSubmit)="submitEscaladeForm()">
-          <div class="form-group">
-            <label>Motif</label>
-            <input type="text" [(ngModel)]="formData.motif" name="motif" required>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Niveau</label>
-              <select [(ngModel)]="formData.niveauEscalade" name="niveauEscalade">
-                <option>MANAGERS</option>
-                <option>DIRECTION</option>
-                <option>CEE</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Date Escalade</label>
-              <input type="datetime-local" [(ngModel)]="formData.dateEscalade" name="dateEscalade" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Action ID</label>
-            <input type="text" [(ngModel)]="formData.actionId" name="actionId" required>
-          </div>
-          <button type="submit" class="btn-submit">Enregistrer</button>
-        </form>
+<form *ngIf="activeTab === 'escalades'" (ngSubmit)="submitEscaladeForm()">
+  
+  <!-- Motif (Enum) -->
+  <div class="form-group">
+    <label>Motif</label>
+    <select [(ngModel)]="formData.motif" name="motif" required>
+      <option value="">-- Choisir un motif --</option>
+      <option value="MANQUE_RESSOURCES">Manque de ressources</option>
+      <option value="BLOCAGE">Blocage</option>
+      <option value="RETARD">Retard</option>
+      <option value="CONFLIT">Conflit</option>
+      <option value="BUDGET_DEPASSE">Budget dépassé</option>
+      <option value="MANQUE_COMPETENCES">Manque de compétences</option>
+    </select>
+  </div>
+
+  <!-- Niveau Escalade -->
+  <div class="form-row">
+    <div class="form-group">
+      <label>Niveau</label>
+      <select [(ngModel)]="formData.niveauEscalade" name="niveauEscalade">
+        <option>MANAGERS</option>
+        <option>DIRECTION</option>
+        <option>RESPONSABLE_HSE</option>
+        <option>DIRECTEUR_GENERALE</option>
+
+      </select>
+    </div>
+
+    <!-- Date Escalade -->
+    <div class="form-group">
+      <label>Date Escalade</label>
+      <input type="datetime-local" [(ngModel)]="formData.dateEscalade" name="dateEscalade" required>
+    </div>
+  </div>
+
+  <!-- Action ID -->
+  <div class="form-group">
+    <label>Action ID</label>
+    <input type="text" [(ngModel)]="formData.actionId" name="actionId" required>
+  </div>
+
+  <button type="submit" class="btn-submit">Enregistrer</button>
+</form>
 
         <!-- SUIVIS FORM -->
         <form *ngIf="activeTab === 'suivis'" (ngSubmit)="submitSuiviForm()">

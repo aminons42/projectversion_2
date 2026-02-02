@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import net.doha.microservice_audit.entities.TypeAudit;
 
 import java.util.List;
 
@@ -52,4 +53,18 @@ public class ChecklistTemplateController {
         QuestionAuditDTO question = templateService.ajouterQuestion(templateId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(question);
     }
+
+@GetMapping("/seed")
+public String seed() {
+    CreateTemplateRequest req = new CreateTemplateRequest();
+    req.setNom("Checklist Sécurité Atelier");
+    req.setDescription("Checklist sécurité standard");
+    req.setTypeAudit(TypeAudit.INTERNE);
+
+    templateService.createTemplate(req, null);
+    return "OK";
+}
+
+
+
 }

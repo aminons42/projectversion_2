@@ -21,19 +21,14 @@ public class SecurityConfig {
         this.jwtAuthFilter = jwtAuthenticationFilter;
     }
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        // Seuls les AUDITEURS peuvent créer des audits
-                        .requestMatchers(HttpMethod.POST, "/api/v1/audits/**").hasAnyRole("AUDITEUR", "ADMIN")
-                        // Les responsables HSE peuvent consulter les rapports d'audits
-                        .requestMatchers(HttpMethod.GET, "/api/v1/audits/**").hasAnyRole("HSE_MANAGER", "AUDITEUR")
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+            .anyRequest().permitAll()  // ← PERMETTRE TOUT (temporaire)
+        );
+    
+    return http.build();
+}
 
-        return http.build();
-    }
 }

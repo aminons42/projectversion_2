@@ -23,12 +23,13 @@ public class auditController {
 
     private AuditService auditService;
 
-    @PostMapping
-    public ResponseEntity<AuditDTO> createAudit(
-            @Valid @RequestBody CreateAuditRequest request, Authentication authentication) {
-        AuditDTO audit = auditService.createAudit(request, authentication);
-        return ResponseEntity.status(HttpStatus.CREATED).body(audit);
-    }
+   @PostMapping
+public ResponseEntity<AuditDTO> createAudit(
+        @Valid @RequestBody CreateAuditRequest request) { // ← on supprime Authentication
+    AuditDTO audit = auditService.createAudit(request); // ← on n’envoie plus authentication
+    return ResponseEntity.status(HttpStatus.CREATED).body(audit);
+}
+
 
     @GetMapping
     public ResponseEntity<List<AuditDTO>> getAllAudits(

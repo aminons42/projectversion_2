@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PlanAction, Action, Escalade, SuiviAction, Verification, CreatePlanActionRequest } from '../models/plan-action.model';
 
+
+
 @Injectable({ providedIn: 'root' })
 export class PlanActionService {
   private plansUrl = environment.plansUrl;
@@ -52,9 +54,9 @@ export class PlanActionService {
     return this.http.get<Action[]>(`${this.actionsUrl}/responsable/${responsableId}`);
   }
 
-  createAction(data: Partial<Action>): Observable<Action> {
-    return this.http.post<Action>(this.actionsUrl, data);
-  }
+ createAction(planId: string, data: Partial<Action>): Observable<Action> {
+    return this.http.post<Action>(`${this.actionsUrl}/plan/${planId}`, data);
+}
 
   updateAction(id: string, action: Partial<Action>): Observable<Action> {
     return this.http.put<Action>(`${this.actionsUrl}/${id}`, action);
@@ -70,8 +72,8 @@ export class PlanActionService {
 
   // === ESCALADES ===
   getAllEscalades(): Observable<Escalade[]> {
-    return this.http.get<Escalade[]>(this.escaladeUrl);
-  }
+    return this.http.get<Escalade[]>(`${this.escaladeUrl}/statut/OUVERTE`);
+}
 
   getEscaladeById(id: string): Observable<Escalade> {
     return this.http.get<Escalade>(`${this.escaladeUrl}/${id}`);
@@ -91,8 +93,8 @@ export class PlanActionService {
 
   // === SUIVIS ===
   getAllSuivis(): Observable<SuiviAction[]> {
-    return this.http.get<SuiviAction[]>(this.suiviUrl);
-  }
+    return this.http.get<SuiviAction[]>(`${this.suiviUrl}/action/1`);
+}
 
   getSuiviById(id: string): Observable<SuiviAction> {
     return this.http.get<SuiviAction>(`${this.suiviUrl}/${id}`);

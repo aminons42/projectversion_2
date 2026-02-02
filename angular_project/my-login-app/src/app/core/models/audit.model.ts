@@ -9,6 +9,8 @@ export interface Audit {
   statut: AuditStatut;
   auditeurId: number;
   departement: string;
+  typeAudit: string;
+  checklistTemplateId: number;
 }
 
 export interface CreateAuditRequest {
@@ -17,4 +19,8 @@ export interface CreateAuditRequest {
   dateDebut: string;
   auditeurId: number;
   departement: string;
+  typeAudit: string;
+
 }
+
+

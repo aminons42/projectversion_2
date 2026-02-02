@@ -8,6 +8,8 @@ export interface PlanAction {
   dateEcheance: string;
   responsableId: string;
   statut?: PlanStatut;
+  source?: SourcePlan;
+  type?: TypeAction;
 }
 
 export interface CreatePlanActionRequest {
@@ -16,6 +18,10 @@ export interface CreatePlanActionRequest {
   dateDebut: string;
   dateEcheance: string;
   responsableId: string;
+  source: SourcePlan;
+  type: TypeAction // ajoute cette ligne
+
+
 }
 
 export interface Action {
@@ -52,3 +58,15 @@ export interface Verification {
   observateurs?: string;
 }
 
+export type SourcePlan = 
+  | 'AUDIT' 
+  | 'INCIDENT' 
+  | 'AMELIORATION_CONTINUE' 
+  | 'INSPECTION' 
+  | 'REMONTEE_TERRAIN';
+
+export type TypeAction = 
+  | 'ACTION_CORRECTIVE' 
+  | 'ACTION_PREVENTIVE' 
+  | 'ACTION_AMELIORATION' 
+  | 'ACTION_URGENCE';

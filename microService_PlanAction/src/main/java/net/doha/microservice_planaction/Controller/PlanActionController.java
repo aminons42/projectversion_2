@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/planaction/plans")
+@RequestMapping("/api/planaction")
 @RequiredArgsConstructor
-@CrossOrigin("*")
 public class PlanActionController {
     private final PlanActionService planActionService;
 
     @PostMapping
-    public PlanActionDTO createPlan(CreatePlanActionRequest req, Authentication auth) throws BadRequestException {
+    public PlanActionDTO createPlan(@RequestBody  CreatePlanActionRequest req, Authentication auth) throws BadRequestException {
         return planActionService.createPlanAction(req, auth);
     }
 
@@ -61,6 +60,16 @@ public class PlanActionController {
                                          @RequestBody CreateAction req) {
         return planActionService.ajouterActionAuPlan(req, planId);
     }
+
+    @PutMapping("/{planId}")
+public PlanActionDTO updatePlan(@PathVariable Long planId, @RequestBody CreatePlanActionRequest req) throws BadRequestException {
+    return planActionService.updatePlanAction(planId, req);
+}
+
+@DeleteMapping("/{planId}")
+public void deletePlan(@PathVariable Long planId) {
+    planActionService.deletePlanAction(planId);
+}
 
 
 

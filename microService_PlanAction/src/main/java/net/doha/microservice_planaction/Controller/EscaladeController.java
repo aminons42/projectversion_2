@@ -7,7 +7,7 @@ import net.doha.microservice_planaction.DTO.EscaladeDTO;
 import net.doha.microservice_planaction.Entities.StatutEscalade;
 import net.doha.microservice_planaction.service.EscaladeService;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,9 +19,9 @@ public class EscaladeController {
 
     // Créer une escalade
     @PostMapping
-    public EscaladeDTO creerEscalade(@RequestBody CreateEscaladeRequeste req) {
-        return escaladeService.creerEscalade(req);
-    }
+    public EscaladeDTO creerEscalade(@Valid @RequestBody CreateEscaladeRequeste req) {
+         return escaladeService.creerEscalade(req);
+}    
 
     // Traiter une escalade
     @PostMapping("/{escaladeId}/traiter/{userId}")

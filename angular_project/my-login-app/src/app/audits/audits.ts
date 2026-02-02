@@ -15,7 +15,8 @@ import { Audit, CreateAuditRequest } from '../core/models/audit.model';
 export class AuditsPage implements OnInit {
   audits: Audit[] = [];
   filteredAudits: Audit[] = [];
-  
+  templates: any[] = [];
+
   // Modal state
   showModal: boolean = false;
   isEditMode: boolean = false;
@@ -37,6 +38,7 @@ export class AuditsPage implements OnInit {
 
   ngOnInit() {
     this.loadAudits();
+
   }
 
   loadAudits() {
@@ -48,6 +50,8 @@ export class AuditsPage implements OnInit {
       error: (err) => console.error('Erreur chargement audits:', err)
     });
   }
+
+  
 
   applyFilters() {
     this.filteredAudits = this.audits.filter(audit => {
@@ -70,7 +74,9 @@ export class AuditsPage implements OnInit {
       description: audit.description,
       dateDebut: audit.dateDebut,
       auditeurId: 1, // À remplacer par ID utilisateur connecté
-      departement: audit.departement
+      departement: audit.departement,
+      typeAudit: audit.typeAudit || 'REGLEMENTAIRE'
+
     };
     this.showModal = true;
   }
@@ -82,20 +88,30 @@ export class AuditsPage implements OnInit {
   }
 
   submitForm() {
-    if (this.isEditMode && this.currentAuditId) {
-      // Pour l'instant, la mise à jour est optionnelle
-      // On peut juste fermer le modal
-      this.closeModal();
-    } else {
-      this.auditService.createAudit(this.formData).subscribe({
-        next: () => {
-          this.loadAudits();
-          this.closeModal();
-          this.notificationService.success('Audit créé avec succès');
-        }
-      });
-    }
+  // Assurer que typeAudit a une valeur par défaut si vide
+  if (!this.formData.typeAudit) {
+    this.formData.typeAudit = 'REGLEMENTAIRE';
   }
+
+  if (this.isEditMode && this.currentAuditId) {
+    // Pour l'instant, la mise à jour est optionnelle
+    // On peut juste fermer le modal
+    this.closeModal();
+  } else {
+    this.auditService.createAudit(this.formData).subscribe({
+      next: () => {
+        this.loadAudits();
+        this.closeModal();
+        this.notificationService.success('Audit créé avec succès');
+      },
+      error: (err) => {
+        console.error('Erreur création audit:', err);
+        this.notificationService.error('Erreur lors de la création de l\'audit');
+      }
+    });
+  }
+}
+
 
   demarrerAudit(id: number) {
     this.auditService.demarrerAudit(id).subscribe({
@@ -147,7 +163,8 @@ export class AuditsPage implements OnInit {
       description: '',
       dateDebut: new Date().toISOString().split('T')[0],
       auditeurId: 1,
-      departement: ''
+      departement: '',
+      typeAudit:'REGLEMENTAIRE',
     };
   }
 }

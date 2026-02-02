@@ -3,13 +3,15 @@ package net.doha.microservice_planaction.Entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Data; 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="ActionPrise") @Builder
+@Table(name="plan_action") 
 @Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor
 public class PlanAction {
     @Id
@@ -17,7 +19,7 @@ public class PlanAction {
     private Long id;
     @Column
     private String titre;
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column
@@ -36,29 +38,29 @@ public class PlanAction {
 
     private Priorite priorite;
 
-    private LocalDateTime dateCreation;
-    private LocalDateTime dateEcheance;
-    private LocalDateTime dateCloture;
+    private LocalDate  dateCreation;
+    private LocalDate dateEcheance;
+    private LocalDate dateCloture;
     private Long responsableId;
     private Double budgetEstime;
     private Double coutReel;
     @Column(name = "valideur_id")
     private Long valideurId;
 
-    private LocalDateTime dateValidation;
+    private LocalDate dateValidation;
     @OneToMany(mappedBy = "planAction",cascade=CascadeType.ALL,orphanRemoval = true)
-    private List<Action> actions =new ArrayList<Action>();
+    private List<Action> actions =new ArrayList<>();
 
 
     public void valider(Long valideurId) {
         this.statut = StatutPlan.VALIDE;
         this.valideurId = valideurId;
-        this.dateValidation = LocalDateTime.now();
+        this.dateValidation = LocalDate.now();
     }
 
     public void cloturer() {
         this.statut = StatutPlan.CLOTURE;
-        this.dateCloture = LocalDateTime.now();
+        this.dateCloture = LocalDate.now();
     }
     public Integer calculerProgression() {
         if (actions.isEmpty()) return 0;

@@ -5,8 +5,10 @@ import net.doha.microservice_planaction.Entities.Priorite;
 import net.doha.microservice_planaction.Entities.SourcePlan;
 import net.doha.microservice_planaction.Entities.StatutPlan;
 import net.doha.microservice_planaction.Entities.TypeAction;
-
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Data; 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -20,14 +22,14 @@ public class PlanActionDTO {
     private StatutPlan statut;
     private Long responsablePlanId;
     private String responsableNom;
-    private LocalDateTime dateCreation;
-    private LocalDateTime dateEcheance;
-    private LocalDateTime dateCloture;
+    private LocalDate dateCreation;
+    private LocalDate dateEcheance;
+    private LocalDate dateCloture;
     private Double budgetEstime;
     private Double coutReel;
     private Long valideurId;
     private String valideurNom;
-    private LocalDateTime dateValidation;
+    private LocalDate dateValidation;
     private Integer progression;
     private List<ActionDTO> actions;
 }

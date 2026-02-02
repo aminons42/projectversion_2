@@ -17,9 +17,9 @@ public class JwtUtils {
     private String secretKey;
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
+    byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
+    return Keys.hmacShaKeyFor(keyBytes);
+}
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

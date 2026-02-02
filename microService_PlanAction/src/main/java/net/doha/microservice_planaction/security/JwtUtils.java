@@ -3,6 +3,8 @@ package net.doha.microservice_planaction.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +18,10 @@ public class JwtUtils {
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 
-    private byte[] getSigningKey() {
-        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes).getEncoded();
-    }
+    private SecretKey getSigningKey() {
+    byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
+    return Keys.hmacShaKeyFor(keyBytes);
+}
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

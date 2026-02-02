@@ -1,7 +1,9 @@
 package net.doha.microservice_planaction.DTO;
 
 import lombok.Data;
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Data; 
 @Data
 public class UserDTO {
     private Long id;

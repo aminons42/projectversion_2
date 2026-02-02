@@ -53,6 +53,7 @@ public class EscaladeService {
         return dto;
     }
     public EscaladeDTO creerEscalade(CreateEscaladeRequeste req) {
+        System.out.println("NIVEAU = " + req.getNiveau());  // 👈 ICI
 
         Escalade esc = new Escalade();
         esc.setMotif(req.getMotif());

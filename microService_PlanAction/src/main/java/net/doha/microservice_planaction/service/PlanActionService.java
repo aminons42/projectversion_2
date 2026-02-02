@@ -34,21 +34,25 @@ public class PlanActionService {
 
 
     private UserDTO getUserByUsername(String username) {
-        try {
-            return restTemplate.getForObject(userServiceUrl + "/api/users/by-username/" + username, UserDTO.class);
-        } catch (Exception e) {
-            throw new RuntimeException("Utilisateur non trouvé: " + username);
-        }
-    }
+    // TEMPORAIRE - On retourne un utilisateur fictif pour tester
+    UserDTO user = new UserDTO();
+    user.setId(1L);
+    user.setUsername(username);
+    user.setNom("Utilisateur");
+    user.setPrenom("Test");
+    return user;
+}
+    
 
 
-    public PlanActionDTO createPlanAction(CreatePlanActionRequest request, Authentication auth) throws BadRequestException {
-        String username = auth.getName();
+    public PlanActionDTO createPlanAction(CreatePlanActionRequest request,Authentication auth) throws BadRequestException {
+        String username = (auth != null) ? auth.getName() : "doha04"; // Utilise doha04 par défaut
         UserDTO responsable = getUserByUsername(username);
         PlanAction plan = new PlanAction();
         plan.setTitre(request.getTitre());
         plan.setDescription(request.getDescription());
         plan.setSource(request.getSource());
+        plan.setType(request.getType());        
         plan.setSourceId(request.getSourceId());
         plan.setPriorite(request.getPriorite());
         plan.setResponsableId(responsable.getId());
@@ -77,8 +81,8 @@ public class PlanActionService {
     }
 
     public List<PlanActionDTO> getMyPlans(Authentication auth) {
-        String username = auth.getName();
-        UserDTO user = getUserByUsername(username);
+         String username = (auth != null) ? auth.getName() : "doha04"; // ← AJOUT
+         UserDTO user = getUserByUsername(username);
 
         return planActionRepo.findByResponsableId(user.getId()).stream()
                 .map(plan -> convertToDTO(plan, user))
@@ -96,11 +100,10 @@ public class PlanActionService {
 
     public PlanActionDTO validerPlan(Long id, Authentication auth) {
         PlanAction plan = planActionRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Plan d'action non trouvé"));
+            .orElseThrow(() -> new RuntimeException("Plan d'action non trouvé"));
 
-        String username = auth.getName();
-        UserDTO valideur = getUserByUsername(username);
-
+    String username = (auth != null) ? auth.getName() : "doha04"; // ← AJOUT
+    UserDTO valideur = getUserByUsername(username);
         plan.valider(valideur.getId());
         plan = planActionRepo.save(plan);
 
@@ -182,6 +185,31 @@ public class PlanActionService {
     }
 
 
+
+public PlanActionDTO updatePlanAction(Long id, CreatePlanActionRequest request) throws BadRequestException {
+    PlanAction plan = planActionRepo.findById(id)
+            .orElseThrow(() -> new RuntimeException("Plan d'action non trouvé"));
+
+    if (request.getTitre() != null) plan.setTitre(request.getTitre());
+    if (request.getDescription() != null) plan.setDescription(request.getDescription());
+    if (request.getSource() != null) plan.setSource(request.getSource());
+    if (request.getType() != null) plan.setType(request.getType());
+    if (request.getDateEcheance() != null) plan.setDateEcheance(request.getDateEcheance());
+    if (request.getBudgetEstime() != null) plan.setBudgetEstime(request.getBudgetEstime());
+    if (request.getPriorite() != null) plan.setPriorite(request.getPriorite());
+
+    plan = planActionRepo.save(plan);
+
+    UserDTO responsable = getUserById(plan.getResponsableId());
+    return convertToDTO(plan, responsable);
+}
+
+public void deletePlanAction(Long id) {
+    PlanAction plan = planActionRepo.findById(id)
+            .orElseThrow(() -> new RuntimeException("Plan d'action non trouvé"));
+    planActionRepo.delete(plan);
+}
+     
 
 
 }

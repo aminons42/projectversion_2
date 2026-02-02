@@ -2,7 +2,9 @@ package net.doha.microservice_planaction.DTO;
 
 import lombok.Data;
 import net.doha.microservice_planaction.Entities.ResultatVerification;
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Data; 
 import java.time.LocalDateTime;
 
 @Data

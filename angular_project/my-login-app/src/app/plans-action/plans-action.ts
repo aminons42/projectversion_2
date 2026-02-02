@@ -10,6 +10,7 @@ import {
   Verification,
   CreatePlanActionRequest 
 } from '../core/models';
+import { tick } from '@angular/core/testing';
 
 @Component({
   selector: 'app-plans-action',
@@ -67,7 +68,8 @@ export class PlansActionPage implements OnInit {
   openPlanModal(plan?: PlanAction) {
     this.isEditMode = !!plan;
     this.currentItem = plan;
-    this.formData = plan ? { ...plan } : { dateDebut: '', dateEcheance: '', responsableId: '', titre: '', description: '' };
+    this.formData = plan ? { ...plan } : { dateDebut: '', dateEcheance: '', responsableId: '', titre: '', description: '',  type: 'ACTION_CORRECTIVE',
+      source: 'AUDIT'};
     this.showModal = true;
   }
 
@@ -83,7 +85,10 @@ export class PlansActionPage implements OnInit {
         dateEcheance: this.formData.dateEcheance,
         responsableId: this.formData.responsableId,
         titre: this.formData.titre,
-        description: this.formData.description
+        description: this.formData.description,
+        type: this.formData.type,      
+        source: this.formData.source   
+
       };
       this.planActionService.createPlan(request).subscribe(() => {
         this.loadAllData();
@@ -106,9 +111,18 @@ export class PlansActionPage implements OnInit {
     this.currentItem = action;
     this.formData = action 
       ? { ...action } 
-      : { planId: this.selectedPlanId, titre: '', description: '', priorite: 'MOYENNE', assigneA: '' };
+      : { 
+          planId: this.selectedPlanId, 
+          description: '', 
+          typeAction: 'ACTION_CORRECTIVE',
+          priorite: 'MOYENNE', 
+          responsableId: 1,
+          dateEcheance: '',
+          ressourcesNecessaires: '',
+          titre:''
+        };
     this.showModal = true;
-  }
+}
 
   submitActionForm() {
     if (this.isEditMode) {
@@ -117,12 +131,27 @@ export class PlansActionPage implements OnInit {
         this.closeModal();
       });
     } else {
-      this.planActionService.createAction(this.formData).subscribe(() => {
+
+       console.log('planId =', this.formData.planId);
+       console.log('type =', typeof this.formData.planId); // 👈 très important
+
+      const actionData = {
+        titre: this.formData.titre,
+        description: this.formData.description,
+        typeAction: this.formData.typeAction,
+        priorite: this.formData.priorite,
+        responsableId: this.formData.responsableId,
+        dateDebut: this.formData.dateDebut || null,
+        ressourcesNecessaires: this.formData.ressourcesNecessaires || null
+      };
+      this.planActionService.createAction(this.formData.planId, actionData).subscribe(() => {
         this.loadAllData();
         this.closeModal();
       });
     }
-  }
+}
+
+
 
   deleteAction(id: string) {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette action ?')) {
