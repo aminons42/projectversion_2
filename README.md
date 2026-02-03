@@ -13,10 +13,9 @@
 - [Installation](#installation)
 - [Démarrage](#démarrage)
 - [Utilisation](#utilisation)
-- [Credentials de Test](#credentials-de-test)
 - [Structure du Projet](#structure-du-projet)
 - [Endpoints API](#endpoints-api)
-- [Troubleshooting](#troubleshooting)
+
 
 ---
 
@@ -59,7 +58,7 @@
 ```
 
 **Composants:**
-- **Angular 17** - Frontend responsive avec Tailwind CSS
+- **Angular 20** - Frontend responsive avec Tailwind CSS
 - **Spring Boot 3.3.4** - Services backend avec Java 17
 - **Eureka Server** - Service discovery et registry
 - **API Gateway** - Routeur centralisé avec load balancing
@@ -82,7 +81,7 @@
 
 ### 1️⃣ Cloner le projet
 ```bash
-git clone https://github.com/votre-org/hse-synergy.git
+git clone https://github.com/aminons42/projectversion_2.git
 cd services_repo
 ```
 
